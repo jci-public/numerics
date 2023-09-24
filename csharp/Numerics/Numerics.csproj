@@ -1,0 +1,83 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<LangVersion>latest</LangVersion>
+		<RootNamespace>JohnsonControls.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+		<AssemblyName>JohnsonControls.$(MSBuildProjectName)</AssemblyName>
+		<Title>JohnsonControls.Numerics</Title>
+		<Authors>JohnsonControls</Authors>
+		<Description>Collection of tools for numerical methods such as for representing and manipulating units of measure. </Description>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="System.Memory" Version="4.5.5" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' != 'net7.0'">
+		<PackageReference Include="System.Text.Json" Version="7.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="..\..\units.json" Link="Measure\units.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="K4os.Hash.xxHash" Version="1.0.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\jci-logo.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+	
+	<PropertyGroup>
+		<NoWarn Condition="'$(TargetFramework)' == 'netstandard2.0'">$(NoWarn);nullable</NoWarn>
+		<RootNamespace>JohnsonControls.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+		<Copyright>(C) Copyright 2023, Johnson Controls Tyco IP Holdings LLP. Use of this Software is subject to the BSD-2-Clause License. </Copyright>
+		<PackageProjectUrl>https://github.com/jci-public/numerics</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/jci-public/numerics</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>units, measure, numerics</PackageTags>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnableNETAnalyzers>False</EnableNETAnalyzers>
+		<PackageIcon>jci-logo.png</PackageIcon>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+	  <DebugType>full</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+	  <DebugType>full</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.1|AnyCPU'">
+	  <DebugType>full</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.1|AnyCPU'">
+	  <DebugType>full</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
+	  <DebugType>full</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
+	  <DebugType>full</DebugType>
+	</PropertyGroup>
+
+</Project>

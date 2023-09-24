@@ -1,0 +1,165 @@
+{
+	"prefixes":
+	{
+		"si":
+		{
+			"Y":1e24,  "Z":1e21,  "E":1e18,  "P":1e15,  "T":1e12, 
+			"G":1e9,   "M":1e6,   "k":1e3,   "h":1e2,   "da":1e1, 
+			"d":1e-1,  "c":1e-2,  "m":1e-3,  "u":1e-6,  "n":1e-9, 
+			"p":1e-12, "f":1e-15, "a":1e-18, "z":1e-21, "y":1e-24
+		}, 
+		"si+":
+		{
+			"yotta":1e24, "zetta":1e21,  "exa" :1e18,  "peta":1e15,   "tera":1e12, 
+			"giga":1e9,   "mega":1e6,    "kilo":1e3,   "hecto":1e2,   "deka":1e1, 
+			"deci":1e-1,  "centi":1e-2,  "milli":1e-3, "micro":1e-6,  "nano":1e-9,
+            "pico":1e-12, "femto":1e-15, "atto":1e-18, "zepto":1e-21, "yocto":1e-24
+		}
+	},
+	"baseUnits":
+	[
+		"m",   //meter
+		"kg",  //kilogram
+		"s",   //second
+		"A",   //ampere
+		"K",   //kelvin
+		"mol", //mole
+		"cd",  //candela
+		"cy",  //currency
+		"ct",  //count
+		"en"   //enumeration
+	],
+	"units":
+	{		
+		// Ratios
+		"none, nounit, unitless": "1",
+		"%,pph,partperhundred":"1E-2",
+		"‰,ppth,partperthousand":"1E-3",
+		"‱,pptth,partpertenthousand":"1E-4",
+		"pcm,partperhundredthousand":"1E-5",
+		"ppm,partpermillion":"1E-6",
+		"ppb,partperbillion":"1E-9",
+		"ppt,partpertrillion":"1E-12",
+		"ppq,partperquadrillion":"1E-15",
+		
+		// Lengths
+		"[si]m, [si+]meter": "m",
+		"ft, foot, feet": "0.3048*m",
+		"in, inch, inches": "0.0254*m",
+		"mil, mils, thou": "0.0000254*m",
+		"mi, mile, miles": "1609.344*m",
+		"yd, yard, yards": "0.9144*m",
+		
+		// Mass
+		"[si]g, [si+]gram": "1E-3*kg",
+		"[si]t, [si+]tonne, [si+]tonnes": "1E3*kg",
+		"lb, pound": "0.45359237*kg",
+		"tn, ton, shortton": "2000*lb",
+		
+		// Time
+		"[si]s, [si+]second, [si+]seconds": "s",
+		"min, minute, minutes": "60*s",
+		"h, hr, hour, hours": "60*min", 		
+		"d, day, days": "24*h",
+		"wk, week, weeks": "7*d",
+		
+		// Electric Current
+		"[si]A": "A",
+
+		// Thermodynamic Temperature
+		"K": "K", 
+		"degC, celsius": "K+273.15",
+		"degF, fahrenheit": "5/9*K+255.37222222222", 
+		"degR, rankine": "5/9*K",
+		
+		// Thermodynamic Temperature Difference
+		"delC, deltacelsius": "K", 
+		"delF, deltafahrenheit": "5/9*K",
+		
+		// Amount of Substance
+		"mol, mole": "mol",
+		
+		// Area
+		"acre, acres": "62726400000/15499969*m^2",
+		
+		// Volume
+		"gal, gallon, gallons": "0.003785411784*m^3", 
+		"L, liter, liters": "1E-3*m^3",
+		
+		// Volumetric Flow
+		"cfm, CFM": "ft^3/min",
+		
+		// Plane Angle 
+		"deg, degree, degress": "1/360", 
+		"rad, radian, radians": "1 / (2*3.14159265359)", 
+		
+		// Frequency/Activity
+		"[si]Hz, [si+]hertz": "s^-1", 
+		"[si]Bq, [si+]becquerel": "s^-1", 
+		
+		// Force
+		"[si]N, [si+]newton": "m * kg * s^-2",
+		"lbf, poundforce": "4.4482216152605*N",
+
+		// Pressure
+		"[si]Pa, [si+]pascal": "m^-1 * kg * s^-2",
+		"atm, ATM, atmosphere, atmospheres": "101325*Pa", 
+		"bar, BAR": "1E5*Pa", 
+		"inHg": "3386.388640341*Pa",
+		"ftHg": "12*inHg",
+		"mHg": "133322.387415*Pa",
+		"inH2O": "249.08891*Pa",
+		"ftH2O": "12*inH2O",
+		"mH2O": "9806.65*Pa",
+		"psi": "4.4482216152605 / 0.00064516 * Pa",
+		
+		// Energy
+		"[si]J, [si+]joule": "m^2 * kg * s^-2", 
+		"btu, BTU": "1055.05585262 * J", 
+		"cal, calorie": "4.1868*J", 
+		"thm, therm": "105506000*J",
+		
+		// Power
+		"[si]W, [si+]watt": "m^2 * kg * s^-3", 
+		"hp, horsepower": "550 * 0.3048 * 4.4482216152605 * W", 
+		"TR, TOR, RT, tonref, tonrefrigeration": "12000 * 1055.05585262 / 3600 * W",
+		
+    // Electric Potential Difference
+		"[si]V, [si+]volt": "m^2 * kg * s^-3 * A^-1",
+
+    // Capacitance
+		"[si]F, [si+]farad":"m^-2 * kg^-1 * s^4 * A^2",
+
+    // Electric Resistance
+		"[si]Ω,[si+]ohm":"m^2 * kg * s^-3 * A^-2",
+
+    // Electric Conductance
+		"[si]S,[si+]siemens":"m^-2 * kg^-1 * s^3 * A^2",
+
+    // Magnetic Flux
+		"[si]Wb, [si+]weber": "m^2 * kg * s^-2 * A^-1",
+
+    // Magnetic Flux Density
+		"[si]T, [si+]telsa":"kg * s^-2 * A^-1",
+
+    // Inductance
+		"[si]H, [si+]henry": "m^2 * kg * s^-2 * A^-2",
+
+    // Dose
+		"[si]Gy, [si+]gray": "m^2 * s^-2",
+		"[si]sv, [si+]sievert": "Gy",
+		
+		// Luminous Intensity
+		"[si]cd, [si+]candela": "cd",
+		
+		// Currency
+		"monies, money, currency": "cy",
+		
+		// Count
+		"cnt, count": "ct", 
+		"occ, occupants": "ct",
+		
+		// Enumeration
+		"onoff": "en"
+	}
+}
