@@ -19,6 +19,55 @@ namespace JohnsonControls.Numerics.Tests.Measure
         }
 
         [TestMethod]
+        public void BasicUsage()
+        {
+            //Different ways to create units
+            var degF = UnitOfMeasure.Create("degF"); //Direct creation
+            Assert.IsNotNull(degF); 
+
+            ReadOnlySpan<char> fSpan = "degF".AsSpan(); //From a ReadOnlySpan<char> or utf8 ReadOnlySpan<byte>
+            degF = UnitOfMeasure.Create(fSpan);
+            Assert.IsNotNull(degF);
+
+            degF = "degF"; //Implicitly from string
+            Assert.IsNotNull(degF); 
+
+            if (!UnitOfMeasure.TryCreate("degC", out var degC, out var error)) //Attempt to create for custom handling
+                throw new Exception(error);
+
+            Assert.IsFalse(UnitOfMeasure.TryCreate("degc", out _, out var degcError)); //Library attempts to guess incorrect spelling (units are naturally case sensitive)
+            Assert.AreEqual("degc: Unrecognized unit expression 'degc' at position 0. Did you mean: degC, degF, degR, delC, deg, Eg, dag, dg, delF, EGy, daGy?", degcError); 
+
+            //Different ways to convert units
+            var (f, o) = degF.GetConversionTo(degC);
+            Assert.AreEqual(0, 32 * f + o, 1E-9); // 32 degF = 0 degC
+
+            if (!degF.TryGetConversionTo(degC, out f, out o))
+                Assert.Fail(); 
+            Assert.AreEqual(0, 32 * f + o, 1E-9);
+
+            Assert.IsTrue(degF.IsConvertibleTo(degC));
+            Assert.IsFalse(degF.IsConvertibleTo("meter")); //Implicit unit of measure conversion (meter)
+
+            //Shortcuts
+            Assert.AreEqual(0, (32, "degF").ConvertTo("degC"), 1E-9);
+
+            //Compose your own units (simple garbage-free string combinations)
+            var mSq = UnitOfMeasure.Create("m") * "m";
+            Assert.AreEqual("m*m", mSq.ToString());
+            Assert.IsTrue(mSq.IsConvertibleTo("m^2"));
+            Assert.IsTrue(mSq.IsConvertibleTo("(m^(3/2))^(4/3)"));
+
+            var m = mSq / "m";
+            Assert.AreEqual("m*m/(m)", m.ToString());
+            Assert.IsTrue(m.IsConvertibleTo("m"));
+
+            var inch = UnitOfMeasure.Create("in");
+            Assert.AreEqual(2d, (inch + inch).GetConversionTo("in").Factor);
+            Assert.AreEqual(0d, (inch - inch).GetConversionTo("1").Factor); 
+        }
+
+        [TestMethod]
         public async Task HappyPath()
         {
             // Test that the cache is cleared when memory pressure is high
