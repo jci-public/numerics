@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace JohnsonControls.Numerics.Measure
@@ -25,6 +26,14 @@ namespace JohnsonControls.Numerics.Measure
     [JsonConverter(typeof(JsonConverter))]
     public sealed partial class UnitOfMeasure
     {
+        private const byte MultiplyOperator = (byte)'*';
+        private const byte DivideOperator = (byte)'/';
+        private const byte LeftParenthesisOperator = (byte)'(';
+        private const byte RightParenthesisOperator = (byte)')';
+        private const byte AddOperator = (byte)'+';
+        private const byte SubtractOperator = (byte)'-';
+        private const byte PowerOperator = (byte)'^';
+
         /// <summary>
         /// A representation for "not a unit"
         /// </summary>
@@ -114,6 +123,15 @@ namespace JohnsonControls.Numerics.Measure
             return true;
         }
 
+        /// <summary>
+        /// Checks if the unit is convertible to the destination
+        /// </summary>
+        /// <param name="destination">The unit of the value to convert to</param>
+        /// <returns>Whether the unit is convertible</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsConvertibleTo(UnitOfMeasure? destination) =>
+            destination is null || _resolver.AreEqual(_exponents, destination._exponents);
+
         /// <inheritdoc/>
         public override string ToString() => _origin;
 
@@ -122,6 +140,59 @@ namespace JohnsonControls.Numerics.Measure
         /// </summary>
         /// <returns>The utf8 bytes.</returns>
         public ReadOnlySpan<byte> ToUtf8String() => _originUtf8;
+
+        /// <inheritdoc/>
+        public static UnitOfMeasure operator *(UnitOfMeasure x, UnitOfMeasure y) => Combine(x, y, MultiplyOperator, false);
+
+        /// <inheritdoc/>
+        public static UnitOfMeasure operator /(UnitOfMeasure x, UnitOfMeasure y) => Combine(x, y, DivideOperator, true);
+
+        /// <inheritdoc/>
+        public static UnitOfMeasure operator +(UnitOfMeasure x, UnitOfMeasure y) => Combine(x, y, AddOperator, false);
+
+        /// <inheritdoc/>
+        public static UnitOfMeasure operator -(UnitOfMeasure x, UnitOfMeasure y) => Combine(x, y, SubtractOperator, true);
+
+        /// <inheritdoc/>
+        public static UnitOfMeasure operator ^(UnitOfMeasure x, UnitOfMeasure y) => Combine(x, y, PowerOperator, true);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static UnitOfMeasure Combine(UnitOfMeasure x, UnitOfMeasure y, byte token, bool group)
+        {
+            var xb = x._originUtf8; var yb = y._originUtf8;
+            var length = xb.Length + yb.Length + (group ? 3 : 1);
+             
+            if (length <= 256)
+            {
+                Span<byte> sb = stackalloc byte[length];
+                CopyTo(sb, xb, yb, token, group);
+                return Create(sb);
+            }
+
+            var a = ArrayPool<byte>.Shared.Rent(length);
+            var s = a.AsSpan(0, length);
+            CopyTo(s, xb, yb, token, group);
+            var u = Create(s); 
+            ArrayPool<byte>.Shared.Return(a);
+            return u; 
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            static void CopyTo(Span<byte> destination, ReadOnlySpan<byte> x, ReadOnlySpan<byte> y, byte token, bool group)
+            {
+                x.CopyTo(destination);
+                destination[x.Length] = token;
+                if (group)
+                {
+                    destination[x.Length + 1] = LeftParenthesisOperator;
+                    y.CopyTo(destination.Slice(x.Length + 2));
+                    destination[x.Length + 2 + y.Length] = RightParenthesisOperator;
+                }
+                else
+                {
+                    y.CopyTo(destination.Slice(x.Length + 1));
+                }
+            }
+        }
 
         /// <summary>
         /// An implicit conversion from string to unit of measure. This will return <see cref="NaU"/> if the conversion fails.
@@ -313,7 +384,7 @@ namespace JohnsonControls.Numerics.Measure
                 {
                     Span<byte> sb = stackalloc byte[length];
                     length = reader.CopyString(sb);
-                    return Create(sb.Slice(0, length));
+                    return Create(sb);
                 }
 
                 var apb = ArrayPool<byte>.Shared.Rent(length);
