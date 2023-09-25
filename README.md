@@ -20,7 +20,7 @@ units of measure that is fully configurable via a json file during startup.
 The primary function of units of measure is to compose and convert between units, including all of their many misnomers/spellings 
 such as FT3_PER_MIN or CFM rather than ft^3/min (this implementation allows many to exist together in harmony). The library is not optimized for 
 aggressive unit math as it is intended to be used to compute units once per operation and then leverage the conversion factor and offset
-for many value combinations thereafter rather than using it to compute something like 10 * m + 7 * m into 17 * m for each operation. 
+for many value combinations thereafter. 
 
 <div id='create-units'/>
 
@@ -98,14 +98,14 @@ Assert.AreEqual(0d, (inch - inch).GetConversionTo("1").Factor);
 Sometimes it's helpful to have cleaner methods to do basic operations with fewer lines, these are a collection of useful shortcuts. 
 
 ```csharp
-//"Syntax sugar" to help simply usage
+//"Syntax sugar" to help simplify usage
 Assert.AreEqual(0, (32, "degF").ConvertTo("degC"), 1E-9);
 ```
 
 <div id='config-units'/>
 
 ### Configuration
-Defining units can be tidious to specify each unit for all the many spellings units may take on (one of the reasons
+Defining units can be tedious given how many alternate spellings units may have (one of the reasons
 for this implementation). Considering the subsequent snippet of the default json we can see three main configuration
 options: prefixes, base units, and units (expressions). 
 
@@ -150,6 +150,9 @@ UnitOfMeasure.Configure(UnitOfMeasure.Options.Default);
 		"h, hr, hour, hours": "60*min", 		
 		"d, day, days": "24*h",
 		"wk, week, weeks": "7*d",
+
+		// Volumetric Flow
+		"cfm, CFM": "ft^3/min",
 	}
 }
 ```
