@@ -1,11 +1,11 @@
 # Johnson Controls Numerics
 This repository contains a collection of tools, patterns, methods, and algorithms for solving various 
 problems common in our industry - especially in the numerics space. C# is our language of choice, but the 
-concepts are applicable to any language and we welcome ports directly within this repoisotry.
+concepts are applicable to any language, and we welcome ports directly within this repository.
 
 - [Units of Measure (C#)](#units-csharp)
 	- [Creating Units](#create-units)
-	- [Convert Units](#convert-units)
+	- [Converting Units](#convert-units)
 	- [Composing Units](#compose-units)
 	- [Syntax Sugar](#syntax-sugar-units)	
 	- [Configuration](#config-units)
@@ -13,11 +13,11 @@ concepts are applicable to any language and we welcome ports directly within thi
 <div id='units-csharp'/>
 
 ## Units of Measure (C#)
-Yes, this is yet another units of measure implementation that provides common functionality, but we find that most are unnecessarily rigid
+Yes, this is yet another unit of measure implementation that provides common functionality, but we find that most are unnecessarily rigid
 or are lacking features our algorithms rely heavily on. This work focuses on providing a simple, flexible, and extensible framework for 
-units of measure that is fully configurable via a json file during startup. 
+units of measure that is fully configurable via a JSON file during startup. 
 
-The primary function of units of measure is to compose and convert between units, including all of their many misnomers/spellings 
+The primary function of units of measure is to compose and convert between units, including all their many misnomers/spellings 
 such as FT3_PER_MIN or CFM rather than ft^3/min (this implementation allows many to exist together in harmony). The library is not optimized for 
 aggressive unit math as it is intended to be used to compute units once per operation and then leverage the conversion factor and offset
 for many value combinations thereafter. 
@@ -72,7 +72,7 @@ Assert.IsFalse(degF.IsConvertibleTo("meter")); //Implicit unit of measure conver
 <div id='compose-units'/>
 
 ### Composing Units
-Units are highly composable, meaning that expressions of configured units are encouraged rather than overspecifying. 
+Units are highly composable, meaning that expressions of configured units are encouraged rather than over specifying. 
 For example, we may choose to define a meter and a second, but acceleration can just be composed as m / s ^ 2! Of course, 
 any string can contain these expressions, but the implementation also offers garbage free operators to help combine existing units. 
 
@@ -106,11 +106,11 @@ Assert.AreEqual(0, (32, "degF").ConvertTo("degC"), 1E-9);
 
 ### Configuration
 Defining units can be tedious given how many alternate spellings units may have (one of the reasons
-for this implementation). Considering the subsequent snippet of the default json we can see three main configuration
+for this implementation). Considering the subsequent snippet of the default JSON we can see three main configuration
 options: prefixes, base units, and units (expressions). 
 
 This configuration can be changed at any time (thread safely) at runtime by using the subsequent snippet. Note that the 
-subsequent json deserializes directly into the UnitOfMeasure.Options object as well. By default, the implementation loads the units.json 
+subsequent JSON deserializes directly into the UnitOfMeasure.Options object as well. By default, the implementation loads the units.json 
 present in this repository at static construction. 
 
 ```csharp
@@ -165,9 +165,9 @@ the original expression.
 
 #### Base Units 
 The concept of a base unit is the foundation of this implementation and is derived from the standard: [International System of Quantities](https://en.wikipedia.org/wiki/International_System_of_Quantities).
-In this system of quantities, every phsyical unit resolves into the SI base units. For instance, the pressure 
+In this system of quantities, every physical unit resolves into the SI base units. For instance, the pressure 
 unit of Pascal resolves into the expression "m ^ -1 * kg * s ^ -2". It is important to note that these base units 
-themselves cannot containe algebraic expressions as they always have an offset of zero and a factor of one. For 
+themselves cannot contain algebraic expressions as they always have an offset of zero and a factor of one. For 
 units to be commensurable with one another, they must share equivalent base units. This implementation supports fractional 
 powers m ^ (1/3) for representing various mathematical modeling units and therefore supports a small cumulative tolerance of 0.01 to determine 
 when two units are commensurable (m ^ 0.333) is commensurable with (m ^ 0.334) and therefore are convertible. 
