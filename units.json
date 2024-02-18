@@ -90,7 +90,7 @@
 		"cfm, CFM": "ft^3/min",
 		
 		// Plane Angle 
-		"deg, degree, degress": "1/360", 
+		"deg, degree, degrees": "1/360", 
 		"rad, radian, radians": "1 / (2*3.14159265359)", 
 		
 		// Frequency/Activity
@@ -125,7 +125,7 @@
 		"TR, TOR, RT, tonref, tonrefrigeration": "12000 * 1055.05585262 / 3600 * W",
 		
     // Electric Potential Difference
-		"[si]V, [si+]volt": "m^2 * kg * s^-3 * A^-1",
+		"[si]V, [si,si+]volt": "m^2 * kg * s^-3 * A^-1",
 
     // Capacitance
 		"[si]F, [si+]farad":"m^-2 * kg^-1 * s^4 * A^2",

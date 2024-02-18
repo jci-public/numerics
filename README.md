@@ -145,7 +145,7 @@ UnitOfMeasure.Configure(UnitOfMeasure.Options.Default);
 		"yd, yard, yards": "0.9144*m",
 
 		// Time
-		"[si]s, [si+]second, [si+]seconds": "s",
+		"[si]s, [si,si+]second, [si+]seconds": "s",
 		"min, minute, minutes": "60*s",
 		"h, hr, hour, hours": "60*min", 		
 		"d, day, days": "24*h",
@@ -161,7 +161,7 @@ UnitOfMeasure.Configure(UnitOfMeasure.Options.Default);
 Prefixes allow a quick method to add all the prefixes for a given unit using the provided factors. This ultimately allows 
 the configuration to be significantly more concise compared to specifying each variant of an SI unit. For example, 
 the "si" prefix applied to meters "m" will fill in nm, um, mm, and so forth while applying the appropriate scale from 
-the original expression. 
+the original expression. More than one prefix can be applied to a single unit as well by listing them as comma separated. 
 
 #### Base Units 
 The concept of a base unit is the foundation of this implementation and is derived from the standard: [International System of Quantities](https://en.wikipedia.org/wiki/International_System_of_Quantities).

@@ -93,6 +93,7 @@ namespace JohnsonControls.Numerics.Measure
             private const int PrecisionDigits = 3;
             private static readonly double Precision = 1 / Math.Pow(10, PrecisionDigits);
             private static readonly int Tolerance = (int)Math.Round(0.01 / Precision, PrecisionDigits);
+            private static readonly char[] Preseeks = [']', ',']; 
 
             private readonly short[] ZeroExponents;
             private readonly Dictionary<SpanKey, UnitInfo> _units = new();
@@ -152,50 +153,67 @@ namespace JohnsonControls.Numerics.Measure
                 foreach (var kv1 in options.Units)
                 {
                     var units = kv1.Key;
+                    var unitsSpan = units.AsSpan(); 
                     var expression = kv1.Value;
-                    foreach (var unit in units.Split(','))
+
+                    string[]? lastPrefixes = null; 
+                    for (var j = 0; j < units.Length; j++)
                     {
-                        string? pu;
-                        var u = FilterExpression(unit).Replace("[", "");
-                        var parts = u.Split(']');
-                        switch (parts.Length)
+                        var token = units[j];
+                        switch (token)
                         {
-                            case 1: pu = null; break;
-                            case 2: u = parts[1]; pu = parts[0]; break;
-                            default: throw new Exception($"Unrecognized prefix at {unit}");
+                            case ' ':
+                                continue;
+                            case '[':
+                                var ps = unitsSpan.Slice(j + 1);
+                                var k = ps.IndexOf(']');
+                                if (k == -1) throw new Exception($"Mismatched [] in prefix in {units}");
+
+                                lastPrefixes = ps.Slice(0, k).ToString().Split(',');
+                                j += k; 
+                                break;
+                            case ',':
+                                var ss = unitsSpan.Slice(0, j);
+                                ProcessLastUnit(ss); 
+                                lastPrefixes = null;
+                                break;
                         }
+                    }
+
+                    ProcessLastUnit(unitsSpan);
+                    
+                    void ProcessLastUnit(ReadOnlySpan<char> source)
+                    {
+                        var k = source.LastIndexOfAny(Preseeks);
+
+                        source = k == -1 ? source : source.Slice(k + 1);
+                        var unit = FilterExpression(source.ToString());
 
                         if (!TryResolve(FilterExpression(expression).AsSpan(), out var x, out var error))
                             throw new Exception($"Unable to resolve {expression} for {unit}: {error}");
 
-                        if (!baseUnits.Contains(u))
+                        if (!baseUnits.Contains(unit))
                         {
-                            var sk = SpanKey.Allocate(MemoryMarshal.AsBytes(u.AsSpan()), out var pin);
+                            var sk = SpanKey.Allocate(MemoryMarshal.AsBytes(unit.AsSpan()), out var pin);
                             _units.Add(sk, new(x.Exponents, x.Factor, x.Offset, pin));
                         }
 
-                        if (pu is null) continue;
+                        if (lastPrefixes is null) return;
 
-                        foreach (var kv2 in prefixes)
-                        {
-                            var name = kv2.Key;
-                            var pxs = kv2.Value;
-                            if (pu != name) continue;
-                            foreach (var kv3 in pxs)
+                        foreach (var prefix in lastPrefixes)
+                            foreach (var kv2 in prefixes[prefix])
                             {
-                                var px = kv3.Key;
-                                var f = kv3.Value;
-                                var n = $"{px}{u}";
+                                var px = kv2.Key;
+                                var f = kv2.Value;
+                                var n = $"{px}{unit}";
                                 if (baseUnits.Contains(n)) continue;
 
                                 if (SpanKey.Use(MemoryMarshal.AsBytes(n.AsSpan()), _units, static (u, sk) => u.ContainsKey(sk)))
-                                    n = $"[{px}]{u}"; //mark to indicate conflict
+                                    n = $"[{px}]{unit}"; //mark to indicate conflict
 
                                 var sk = SpanKey.Allocate(MemoryMarshal.AsBytes(n.AsSpan()), out var pin);
                                 _units.Add(sk, new(x.Exponents, x.Factor * f, x.Offset, pin));
                             }
-                            break;
-                        }
                     }
                 }
             }
@@ -339,12 +357,13 @@ namespace JohnsonControls.Numerics.Measure
 
             protected override string GetExpressionError(ReadOnlySpan<char> expression, int position)
             {
-                var search = expression.ToString().ToLower();
+                var search = expression.ToString();
+                var searchLower = search.ToLower();
                 var matches = _units.Keys
                     .Select(k =>
                     {
                         var v = MemoryMarshal.Cast<byte, char>(k.AsSpan()).ToString();
-                        return (Value: v, Distance: search.LevenshteinDistance(v.ToLower().AsSpan()));
+                        return (Value: v, Distance: searchLower.LevenshteinDistance(v.ToLower().AsSpan()));
                     })
                     .OrderBy(a => a.Distance).Select(a => a.Value).Take(11);
                 return $"Unrecognized unit expression '{search}' at position {position}. Did you mean: {string.Join(", ", matches)}?";
