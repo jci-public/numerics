@@ -9,7 +9,7 @@
 		<RootNamespace>JohnsonControls.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 		<AssemblyName>JohnsonControls.$(MSBuildProjectName)</AssemblyName>
 		<Title>JohnsonControls.Numerics</Title>
-		<Authors>JohnsonControls</Authors>
+		<Authors>JohnsonControls, przybylskia</Authors>
 		<Description>Collection of tools for numerical methods such as for representing and manipulating units of measure. </Description>
 	</PropertyGroup>
 
@@ -54,6 +54,9 @@
 		<AnalysisLevel>latest</AnalysisLevel>
 		<EnableNETAnalyzers>False</EnableNETAnalyzers>
 		<PackageIcon>jci-logo.png</PackageIcon>
+		<Company>JohnsonControls</Company>
+		<Version>$(VersionPrefix)1.0.1</Version>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">

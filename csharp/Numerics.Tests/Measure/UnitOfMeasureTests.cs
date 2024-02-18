@@ -134,6 +134,7 @@ namespace JohnsonControls.Numerics.Tests.Measure
             AssertConvertible("J/s", "W");
             AssertConvertible("m^1.333", "m^(4/3)");
             AssertConvertible("m^1.33", "m^(4/3)");
+            AssertConvertible("mvolt", "millivolt"); 
             Assert.ThrowsException<ArgumentException>(() => AssertConvertible("m^1.3", "m^(4/3)"));
             AssertConvertible("2 * m^1.33", "7.8 * m^(4/3)");
         }
